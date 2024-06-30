@@ -1,4 +1,6 @@
 <script>
+    import { onMount } from "svelte";
+
     async function onSubmit(e) {
         const formData = new FormData(e.target);
 
@@ -17,6 +19,21 @@
         });
         const resData = await response.json();
         console.log(resData);
+
+        fetchCommands();
+    }
+
+    export let commands = [];
+
+    onMount(() => {
+        fetchCommands();
+    });
+
+    async function fetchCommands() {
+        const response = await fetch(`http://localhost:5000/slash`);
+        const data = await response.json();
+        console.log(data);
+        commands = data;
     }
 </script>
 
@@ -30,6 +47,18 @@
         <input name="workflow_id" type="text" placeholder="workflow_id" />
         <input type="submit" value="submit" />
     </form>
+
+    <h3>Current commands</h3>
+
+    <div>
+        <ul>
+            {#each commands as command}
+                <li>
+                    {command.path_id}, {command.command}, {command.workflow_id}
+                </li>
+            {/each}
+        </ul>
+    </div>
 </main>
 
 <style>
