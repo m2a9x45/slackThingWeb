@@ -1,6 +1,9 @@
 <script>
     import { onMount } from "svelte";
 
+    const redirectURI =
+        "https://26f0-2a00-23c6-1503-4301-a50c-9c5a-c122-b913.ngrok-free.app/oauth/slack";
+
     async function onSubmit(e) {
         const formData = new FormData(e.target);
 
@@ -62,7 +65,7 @@
 
     <div>
         <a
-            href="https://slack.com/openid/connect/authorize?scope=openid%20email%20profile&amp;response_type=code&amp;redirect_uri=https%3A%2F%2Fecd0-2a00-23c6-1503-4301-7c79-3d0d-924-1dcf.ngrok-free.app%2Foauth%2Fslack&amp;client_id=7182068826032.7161902500340"
+            href="https://slack.com/openid/connect/authorize?scope=openid%20email%20profile&amp;response_type=code&amp;redirect_uri={redirectURI}&amp;client_id=7182068826032.7161902500340"
             style="align-items:center;color:#000;background-color:#fff;border:1px solid #ddd;border-radius:4px;display:inline-flex;font-family:Lato, sans-serif;font-size:16px;font-weight:600;height:48px;justify-content:center;text-decoration:none;width:256px"
             ><svg
                 xmlns="http://www.w3.org/2000/svg"
