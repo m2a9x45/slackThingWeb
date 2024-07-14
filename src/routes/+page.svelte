@@ -1,8 +1,7 @@
 <script>
     import { onMount } from "svelte";
 
-    const redirectURI =
-        "https://26f0-2a00-23c6-1503-4301-a50c-9c5a-c122-b913.ngrok-free.app/oauth/slack";
+    const redirectURI = "https://7d7b-31-53-104-139.ngrok-free.app/oauth/slack";
 
     async function onSubmit(e) {
         const formData = new FormData(e.target);
@@ -30,6 +29,7 @@
 
     onMount(() => {
         fetchCommands();
+        whoami();
     });
 
     async function fetchCommands() {
@@ -37,6 +37,14 @@
         const data = await response.json();
         console.log(data);
         commands = data;
+    }
+
+    async function whoami() {
+        const response = await fetch(`http://localhost:5000/whoami`, {
+            credentials: "include",
+        });
+        const data = await response.json();
+        console.log(data);
     }
 </script>
 

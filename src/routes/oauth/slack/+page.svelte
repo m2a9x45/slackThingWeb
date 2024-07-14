@@ -12,6 +12,7 @@
                 "content-type": "application/json",
             },
             body: JSON.stringify({ code: code }),
+            credentials: "include",
         });
         const resData = await response.json();
         console.log(resData);
