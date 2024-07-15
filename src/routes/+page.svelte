@@ -33,7 +33,9 @@
     });
 
     async function fetchCommands() {
-        const response = await fetch(`http://localhost:5000/slash`);
+        const response = await fetch(`http://localhost:5000/slash`, {
+            credentials: "include",
+        });
         const data = await response.json();
         console.log(data);
         commands = data;
