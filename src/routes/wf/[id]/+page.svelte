@@ -1,27 +1,41 @@
 <script>
-    import Draggable from "../../../components/draggable.svelte";
-    // import { onMount } from "svelte";
+  import Draggable from "../../../components/draggable.svelte";
+  import { get } from "svelte/store";
+  import { lines } from "./linesStore";
+  // import { onMount } from "svelte";
 
-    // onMount(() => {
-    //     readWorkflow();
-    // });
+  // onMount(() => {
+  //     readWorkflow();
+  // });
 
-    // export let steps = [];
+  // export let steps = [];
 
-    // async function readWorkflow() {
-    //     const response = await fetch(`http://localhost:5000/wf`, {
-    //         credentials: "include",
-    //     });
-    //     const data = await response.json();
-    //     console.log(data);
-    //     steps = data;
-    // }
+  // async function readWorkflow() {
+  //     const response = await fetch(`http://localhost:5000/wf`, {
+  //         credentials: "include",
+  //     });
+  //     const data = await response.json();
+  //     console.log(data);
+  //     steps = data;
+  // }
 
-    let lines = {};
+  let x1;
+  let x2;
+  let y1;
+  let y2;
 
-    function onMouseUp(e) {
-        console.log(lines);
-    }
+  function onMouseUp(e) {
+    console.log(get(lines));
+    // console.log(get(lines).get("123").x);
+
+    const things = get(lines);
+
+    x1 = things.get("123").x;
+    y1 = things.get("123").y;
+
+    x2 = things.get("456").x;
+    y2 = things.get("456").y;
+  }
 </script>
 
 <!-- {#each steps as step}
@@ -42,24 +56,32 @@
 <!-- https://stackoverflow.com/questions/64604624/programatically-get-svelte-component-instance -->
 
 <main>
-    <Draggable bind:lines>
-        <h1>Drag Me</h1>
-    </Draggable>
-    <Draggable>
-        <h1>Drag Me 2</h1>
-    </Draggable>
+  <Draggable id={"123"}>
+    <h1>Drag Me</h1>
+  </Draggable>
+  <Draggable id={"456"}>
+    <h1>Drag Me 2</h1>
+  </Draggable>
 
-    <svg width="500" height="500"
-        ><line x1="50" y1="50" x2="350" y2="50" stroke="red" /></svg
-    >
+  <svg><line {x1} {y1} {x2} {y2} stroke="red" /></svg>
 </main>
 
 <svelte:window on:mouseup={onMouseUp} />
 
 <style>
-    main {
-        width: 100%;
-        height: 100%;
-        margin: 1rem auto;
-    }
+  :global(body) {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  main {
+    width: 100%;
+    height: 100%;
+    margin: 1rem auto;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
 </style>
