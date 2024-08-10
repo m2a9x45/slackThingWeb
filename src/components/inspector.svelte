@@ -26,7 +26,34 @@
     // const data = await response.json();
     // console.log(data);
 
-    dispatch("notify", "detail value");
+    dispatch("notify", "default");
+  }
+
+  let nextStepID;
+  let action;
+
+  async function createWorkflowBranch() {
+    const body = {
+      step_id: selectedStep.step_id,
+      next_step_id: nextStepID,
+      action,
+    };
+
+    const response = await fetch(
+      `http://localhost:5000/wf/step/branch/create`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+    // const data = await response.json();
+    // console.log(data);
+
+    dispatch("notify", selectedStep.step_id);
   }
 </script>
 
@@ -64,6 +91,10 @@
           <span>{branch.action_id}</span>
         </div>
       {/each}
+
+      <input bind:value={nextStepID} type="text" placeholder="next_step_id" />
+      <input bind:value={action} type="text" placeholder="action" />
+      <button on:click={createWorkflowBranch}>New branch</button>
     {/if}
 
     <button on:click={updateWorkflow}>Save</button>
