@@ -12,8 +12,9 @@
   });
 
   export let steps = [];
+  let stepIDs = [];
 
-  const spacing = [200, 600, 1000];
+  const spacing = [100, 400, 700];
 
   let showSidebar = false;
 
@@ -22,6 +23,11 @@
   let y1;
   let y2;
 
+  function callbackFunction(event) {
+    console.log(`Notify fired! Detail: ${event.detail}`);
+    readWorkflow();
+  }
+
   async function readWorkflow() {
     const response = await fetch(`http://localhost:5000/wf`, {
       credentials: "include",
@@ -29,17 +35,19 @@
     const data = await response.json();
     console.log(data);
     steps = data;
+
+    steps.forEach((step) => {
+      stepIDs.push(step.step_id);
+    });
   }
 
   function onMouseUp(e) {
     // console.log(get(lines));
-    const things = get(lines);
-
-    x1 = things.get("123").x;
-    y1 = things.get("123").y;
-
-    x2 = things.get("456").x;
-    y2 = things.get("456").y;
+    //   const things = get(lines);
+    //   x1 = things.get("123").x;
+    //   y1 = things.get("123").y;
+    //   x2 = things.get("456").x;
+    //   y2 = things.get("456").y;
   }
 
   let selectedStep;
@@ -52,7 +60,7 @@
 <main>
   <div class="content">
     {#each steps as step, i}
-      <Draggable id={step.step_id} left={spacing[i]}>
+      <Draggable id={step.step_id} top={spacing[i]}>
         <div>
           <h4>StepID: {step.step_id}</h4>
           <p>Type: {step.action}</p>
@@ -69,20 +77,21 @@
       </Draggable>
     {/each}
 
-    <Draggable id={"123"} top={400}>
+    <!-- <Draggable id={"123"} top={400}>
       <h1>Drag Me</h1>
     </Draggable>
     <Draggable id={"456"} left={400} top={400}>
       <h1>Drag Me 2</h1>
-    </Draggable>
+    </Draggable> -->
 
-    <svg><line {x1} {y1} {x2} {y2} stroke="red" /></svg>
+    <!-- <svg><line {x1} {y1} {x2} {y2} stroke="red" /></svg> -->
   </div>
 
   {#if showSidebar}
     <div class="sidebar">
-      <h1>Side Bar</h1>
-      <Inspector step={selectedStep}></Inspector>
+      <h1>Step editor</h1>
+      <Inspector on:notify={callbackFunction} step={selectedStep} {stepIDs}
+      ></Inspector>
     </div>
   {/if}
 </main>
@@ -107,7 +116,9 @@
   }
 
   .sidebar {
-    width: 20%;
+    padding: 1rem;
+    width: 30%;
+    max-width: 500px;
     height: 100vh;
     background-color: rgb(206, 231, 246);
   }

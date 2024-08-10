@@ -80,5 +80,6 @@
     cursor: move;
     border: solid 1px gray;
     position: absolute;
+    padding: 1rem;
   }
 </style>
