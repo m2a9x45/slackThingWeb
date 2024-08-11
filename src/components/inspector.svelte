@@ -6,6 +6,9 @@
 
   const dispatch = createEventDispatcher();
   let selectedStep;
+  let nextStepID;
+  let action;
+  let showAddOptions = false;
 
   $: {
     console.log(step);
@@ -28,9 +31,6 @@
 
     dispatch("notify", "default");
   }
-
-  let nextStepID;
-  let action;
 
   async function createWorkflowBranch() {
     const body = {
@@ -55,17 +55,15 @@
 
     dispatch("notify", selectedStep.step_id);
   }
+
+  function toggleShowAddOptions() {
+    showAddOptions = !showAddOptions;
+  }
 </script>
 
-<div>
-  <h3>StepID: {selectedStep.step_id}</h3>
+<div class="content">
+  <h3>Edit step - {selectedStep.step_id}</h3>
   <div>
-    <!-- <select bind:value={step.action} name="cars" id="cars">
-      {#each ["button_selection", "send_message", "open_model"] as option}
-        <option value={option}>{option}</option>
-      {/each}
-    </select> -->
-
     <label for="step_message">Message</label>
     <textarea
       name="step_message"
@@ -74,27 +72,36 @@
     />
 
     {#if selectedStep.action === "button_selection"}
-      <label for="step_branches">Branches</label>
-      {#each selectedStep.branches as branch}
-        <div class="branch">
-          <label for="">Message</label>
-          <input type="text" bind:value={branch.text} />
+      <div>
+        {#each selectedStep.branches as branch, i}
+          <div class="branch">
+            <label for="">Option {i + 1}:</label>
+            <input type="text" bind:value={branch.text} />
 
-          <label for="">Next stepID</label>
-          <select bind:value={branch.next_step_id}>
-            {#each stepIDs as id}
-              <option>{id}</option>
-            {/each}
-          </select>
+            <label for="">StepID:</label>
+            <select bind:value={branch.next_step_id}>
+              {#each stepIDs as id}
+                <option>{id}</option>
+              {/each}
+            </select>
 
-          <label for="">ActionID</label>
-          <span>{branch.action_id}</span>
-        </div>
-      {/each}
+            <!-- <label for="">ActionID</label> -->
+            <!-- <span>{branch.action_id}</span> -->
+          </div>
+        {/each}
 
-      <input bind:value={nextStepID} type="text" placeholder="next_step_id" />
-      <input bind:value={action} type="text" placeholder="action" />
-      <button on:click={createWorkflowBranch}>New branch</button>
+        <button on:click={toggleShowAddOptions}>Add Option</button>
+
+        {#if showAddOptions}
+          <input
+            bind:value={nextStepID}
+            type="text"
+            placeholder="next_step_id"
+          />
+          <input bind:value={action} type="text" placeholder="action" />
+          <button on:click={createWorkflowBranch}>New branch</button>
+        {/if}
+      </div>
     {/if}
 
     <button on:click={updateWorkflow}>Save</button>
@@ -102,6 +109,11 @@
 </div>
 
 <style>
+  .content {
+    position: sticky;
+    top: 0;
+  }
+
   textarea {
     width: 100%;
     height: 5rem;
@@ -113,12 +125,31 @@
     resize: none;
   }
 
-  input,
   select {
     width: 100%;
   }
 
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
+
+  button {
+    width: 100%;
+    margin: 0.5em 0;
+    background-color: #3f9cff; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+
   .branch {
-    margin: 2rem 0;
+    margin: 1rem 0;
   }
 </style>

@@ -134,7 +134,6 @@
 
   {#if showSidebar}
     <div class="sidebar">
-      <h1>Step editor</h1>
       <Inspector on:notify={callbackFunction} step={selectedStep} {stepIDs}
       ></Inspector>
     </div>
@@ -164,8 +163,8 @@
     padding: 1rem;
     width: 30%;
     max-width: 500px;
-    height: 100vh;
-    background-color: rgb(206, 231, 246);
+    height: 200vh;
+    background-color: rgb(244, 244, 244);
   }
 
   svg {

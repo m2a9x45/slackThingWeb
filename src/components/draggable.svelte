@@ -39,13 +39,13 @@
         left = 0;
       }
 
-      if (left > innerWidth - 100) {
-        left = innerWidth - 100;
-      }
+      // if (left > innerWidth - 100) {
+      //   left = innerWidth - 100;
+      // }
 
-      if (top > innerHeight - 75) {
-        top = innerHeight - 75;
-      }
+      // if (top > innerHeight - 75) {
+      //   top = innerHeight - 75;
+      // }
     }
   }
 
