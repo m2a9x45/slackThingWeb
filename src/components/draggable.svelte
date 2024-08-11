@@ -1,17 +1,26 @@
 <script>
+  import { get } from "svelte/store";
   import { lines } from "../routes/wf/[id]/linesStore";
 
+  export let id;
+  export let workflowID;
   export let left = 100;
   export let top = 100;
-
-  export let id;
+  //   export let lines;
 
   $: innerWidth = 0;
   $: innerHeight = 0;
 
-  //   export let lines;
-
   let moving = false;
+
+  function handleMouseUp() {
+    lines.update((currentLines) => {
+      currentLines.set(id, { left: left, top: top });
+      return currentLines;
+    });
+
+    saveStepLocation(Object.fromEntries(get(lines)));
+  }
 
   function onMouseDown() {
     moving = true;
@@ -40,13 +49,29 @@
     }
   }
 
+  async function saveStepLocation(locations) {
+    const body = {
+      wf_id: workflowID,
+      locations,
+    };
+
+    const response = await fetch(`http://localhost:5000/wf/step/location`, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+  }
+
   function onMouseUp(e) {
     moving = false;
 
-    lines.update((currentLines) => {
-      currentLines.set(id, { x: left, y: top });
-      return currentLines;
-    });
+    // lines.update((currentLines) => {
+    //   currentLines.set(id, { left: left, top: top });
+    //   return currentLines;
+    // });
 
     // lines.set(id, { x: left, y: top });
     // lines = {
@@ -61,6 +86,7 @@
 
 <div
   on:mousedown={onMouseDown}
+  on:mouseup={handleMouseUp}
   style="left: {left}px; top: {top}px;"
   class="draggable"
 >
@@ -76,6 +102,7 @@
 
 <style>
   .draggable {
+    max-width: 300px;
     user-select: none;
     cursor: move;
     border: solid 1px gray;

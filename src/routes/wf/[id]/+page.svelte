@@ -1,31 +1,29 @@
 <script>
   import { page } from "$app/stores";
+  import { onMount } from "svelte";
+  // import { get } from "svelte/store";
+  // import { lines } from "./linesStore";
 
   import Draggable from "../../../components/draggable.svelte";
   import Inspector from "../../../components/inspector.svelte";
   import NewStep from "../../../components/newStep.svelte";
 
-  import { onMount } from "svelte";
-
-  // import { get } from "svelte/store";
-  // import { lines } from "./linesStore";
+  export let steps = [];
 
   const wf_id = $page.params.id;
-  console.log(wf_id);
 
-  onMount(() => {
-    readWorkflow(wf_id);
-  });
-
-  export let steps = [];
   let stepIDs = [];
-
   let showSidebar = false;
-
+  let selectedStep;
   // let x1;
   // let x2;
   // let y1;
   // let y2;
+
+  onMount(() => {
+    readWorkflow(wf_id);
+    readStepsLocations(wf_id);
+  });
 
   async function callbackFunction(event) {
     console.log(`Notify fired! Detail: ${event.detail}`);
@@ -52,19 +50,48 @@
     });
   }
 
-  function onMouseUp(e) {
-    // console.log(get(lines));
-    //   const things = get(lines);
-    //   x1 = things.get("123").x;
-    //   y1 = things.get("123").y;
-    //   x2 = things.get("456").x;
-    //   y2 = things.get("456").y;
+  const stepLocations = new Map();
+
+  async function readStepsLocations(wf_id) {
+    const response = await fetch(
+      `http://localhost:5000/wf/step/location/${wf_id}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+
+    data.forEach((step) => {
+      stepLocations.set(step.step_id, { left: step.left, top: step.top });
+    });
   }
 
-  let selectedStep;
+  function onMouseUp(e) {
+    // console.log(get(lines));
+    // const things = get(lines);
+    // x1 = things.get("123").x;
+    // y1 = things.get("123").y;
+    // x2 = things.get("456").x;
+    // y2 = things.get("456").y;
+  }
+
   function editStep(step) {
     showSidebar = true;
     selectedStep = step;
+  }
+
+  function getStepLocation(stepID, i, direction) {
+    const locaiton = stepLocations.get(stepID);
+    if (locaiton === undefined) {
+      return 100 + i * 300;
+    }
+
+    if (direction === "top") {
+      return locaiton.top;
+    } else {
+      return locaiton.left;
+    }
   }
 </script>
 
@@ -73,7 +100,12 @@
     <NewStep on:notify={callbackFunction} {wf_id}></NewStep>
 
     {#each steps as step, i}
-      <Draggable id={step.step_id} top={100 + i * 300}>
+      <Draggable
+        id={step.step_id}
+        workflowID={step.wf_id}
+        top={getStepLocation(step.step_id, i, "top")}
+        left={getStepLocation(step.step_id, i, "left")}
+      >
         <div>
           <h4>StepID: {step.step_id}</h4>
           <p>Type: {step.action}</p>
